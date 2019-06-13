@@ -4,5 +4,6 @@
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/flowable-support-api" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/flowable-support-core" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/flowable-support-test" charset="UTF-8" />
   </component>
 </project>

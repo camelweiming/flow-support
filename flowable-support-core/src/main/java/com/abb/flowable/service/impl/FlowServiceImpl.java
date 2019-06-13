@@ -52,8 +52,7 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
     private HistoryService historyService;
     private TaskService taskService;
     private RepositoryService repositoryService;
-    private String resource;
-    private static String RESOURCES = "/flowable/*.xml";
+    private org.springframework.core.io.Resource[] resources;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -66,10 +65,6 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
         taskService = processEngine.getTaskService();
         historyService = processEngine.getHistoryService();
         DeploymentBuilder builder = repositoryService.createDeployment();
-        if (resource == null) {
-            resource = RESOURCES;
-        }
-        org.springframework.core.io.Resource[] resources = findAllClassPathResources(resource);
         for (org.springframework.core.io.Resource resource : resources) {
             logger.info("load process file:" + resource.getFile());
             builder.addInputStream(resource.getFilename(), resource.getInputStream());
@@ -361,7 +356,7 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
         this.context = applicationContext;
     }
 
-    public void setResource(String resource) {
-        this.resource = resource;
+    public void setResources(org.springframework.core.io.Resource[] resources) {
+        this.resources = resources;
     }
 }

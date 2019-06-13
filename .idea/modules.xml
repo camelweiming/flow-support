@@ -5,6 +5,7 @@
       <module fileurl="file://$PROJECT_DIR$/flowable-support.iml" filepath="$PROJECT_DIR$/flowable-support.iml" />
       <module fileurl="file://$PROJECT_DIR$/flowable-support-api/flowable-support-api.iml" filepath="$PROJECT_DIR$/flowable-support-api/flowable-support-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/flowable-support-core/flowable-support-core.iml" filepath="$PROJECT_DIR$/flowable-support-core/flowable-support-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/flowable-support-test/flowable-support-test.iml" filepath="$PROJECT_DIR$/flowable-support-test/flowable-support-test.iml" />
     </modules>
   </component>
 </project>
