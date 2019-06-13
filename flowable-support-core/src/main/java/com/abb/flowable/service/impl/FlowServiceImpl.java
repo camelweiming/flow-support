@@ -129,7 +129,7 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
 
     public ResultDTO<List<TaskDTO>> createHistoricTaskInstanceQuery(TaskQuery query) {
         int total = 0;
-        HistoricTaskInstanceQuery q = historyService.createHistoricTaskInstanceQuery().taskAssignee(String.valueOf(query.getUserId()));
+        HistoricTaskInstanceQuery q = historyService.createHistoricTaskInstanceQuery().taskAssignee(String.valueOf(query.getUserId())).orderByTaskCreateTime().desc();
         if (query.isNeedTotal()) {
             total = (int)q.count();
         }
@@ -150,7 +150,7 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
 
     public ResultDTO<List<TaskDTO>> createHistoricProcessInstanceQuery(TaskQuery query) {
         int total = 0;
-        HistoricProcessInstanceQuery q = historyService.createHistoricProcessInstanceQuery().startedBy(query.getUserId());
+        HistoricProcessInstanceQuery q = historyService.createHistoricProcessInstanceQuery().orderByProcessInstanceStartTime().desc().startedBy(query.getUserId());
         if (query.isNeedTotal()) {
             total = (int)q.count();
         }
@@ -171,7 +171,7 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
 
     public ResultDTO<List<TaskDTO>> createTaskQuery(TaskQuery query) {
         int total = 0;
-        org.flowable.task.api.TaskQuery q = taskService.createTaskQuery().taskCandidateOrAssigned(query.getUserId());
+        org.flowable.task.api.TaskQuery q = taskService.createTaskQuery().taskCandidateOrAssigned(query.getUserId()).orderByTaskCreateTime().desc();
         if (query.isNeedTotal()) {
             total = (int)q.count();
         }
