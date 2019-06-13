@@ -3,17 +3,12 @@ package com.abb.flowable.domain;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.util.Date;
-
 /**
  * @author cenpeng.lwm
  * @since 2019/6/7
  */
 public class ProcessNodeDTO extends BaseDTO {
     private static final long serialVersionUID = 4196449326985418273L;
-    public static byte STATE_WAITING = 0;
-    public static byte STATE_PROCESSING = 1;
-    public static byte STATE_END = 2;
     private String id;
     private String activityId;
     private String activityName;
@@ -22,9 +17,6 @@ public class ProcessNodeDTO extends BaseDTO {
     private String taskId;
     private String processInstanceId;
     private String processDefinitionId;
-    private Date startTime;
-    private Date endTime;
-    private Long durationInMillis;
     private String deleteReason;
     private String formKey;
     /**
@@ -108,30 +100,6 @@ public class ProcessNodeDTO extends BaseDTO {
         this.processDefinitionId = processDefinitionId;
     }
 
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
-    }
-
-    public Long getDurationInMillis() {
-        return durationInMillis;
-    }
-
-    public void setDurationInMillis(Long durationInMillis) {
-        this.durationInMillis = durationInMillis;
-    }
-
     public String getDeleteReason() {
         return deleteReason;
     }
@@ -154,16 +122,6 @@ public class ProcessNodeDTO extends BaseDTO {
 
     public void setInitiator(String initiator) {
         this.initiator = initiator;
-    }
-
-    public byte getState() {
-        if (startTime == null) {
-            return STATE_WAITING;
-        }
-        if (endTime != null) {
-            return STATE_END;
-        }
-        return STATE_PROCESSING;
     }
 
     @Override

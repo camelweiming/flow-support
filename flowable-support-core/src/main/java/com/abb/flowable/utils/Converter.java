@@ -1,10 +1,6 @@
 package com.abb.flowable.utils;
 
-
-import com.abb.flowable.domain.BaseDTO;
-import com.abb.flowable.domain.ProcessInstanceDTO;
-import com.abb.flowable.domain.ProcessNodeDTO;
-import com.abb.flowable.domain.TaskDTO;
+import com.abb.flowable.domain.*;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -37,7 +33,21 @@ public class Converter {
         node.setEndTime(historicActivityInstance.getEndTime());
         node.setDurationInMillis(historicActivityInstance.getDurationInMillis());
         node.setDeleteReason(historicActivityInstance.getDeleteReason());
+        setState(node);
         return node;
+    }
+
+    public static void setState(BaseDTO nodeDTO) {
+        if (nodeDTO.getStartTime() == null) {
+            nodeDTO.setState(TaskState.WAITING);
+            return;
+        }
+        if (nodeDTO.getEndTime() != null) {
+            nodeDTO.setState(TaskState.END);
+            return;
+        }
+        nodeDTO.setState(TaskState.PROCESSING);
+        return;
     }
 
     public static ProcessInstanceDTO convert(ProcessInstance processInstance) {
@@ -49,6 +59,10 @@ public class Converter {
     public static TaskDTO convert(HistoricProcessInstance task) {
         TaskDTO flowTaskDTO = new TaskDTO();
         flowTaskDTO.setProcessInstanceId(task.getId());
+        flowTaskDTO.setStartTime(task.getStartTime());
+        flowTaskDTO.setEndTime(task.getEndTime());
+        flowTaskDTO.setDurationInMillis(task.getDurationInMillis());
+        setState(flowTaskDTO);
         return flowTaskDTO;
     }
 
@@ -57,6 +71,13 @@ public class Converter {
         flowTaskDTO.setAssignee(task.getAssignee());
         flowTaskDTO.setTaskId(task.getId());
         flowTaskDTO.setProcessInstanceId(task.getProcessInstanceId());
+        flowTaskDTO.setStartTime(task.getStartTime());
+        flowTaskDTO.setEndTime(task.getEndTime());
+        flowTaskDTO.setDurationInMillis(task.getDurationInMillis());
+        if (flowTaskDTO.getStartTime() == null) {
+            flowTaskDTO.setStartTime(task.getCreateTime());
+        }
+        setState(flowTaskDTO);
         return flowTaskDTO;
     }
 
@@ -68,6 +89,7 @@ public class Converter {
         flowTaskDTO.setProcessDefinitionId(task.getProcessDefinitionId());
         flowTaskDTO.setTaskDefinitionKey(task.getTaskDefinitionKey());
         flowTaskDTO.setFormKey(task.getFormKey());
+        setState(flowTaskDTO);
         return flowTaskDTO;
     }
 

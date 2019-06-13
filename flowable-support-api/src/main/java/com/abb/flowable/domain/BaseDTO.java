@@ -1,6 +1,7 @@
 package com.abb.flowable.domain;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -14,6 +15,47 @@ public abstract class BaseDTO implements Serializable {
     protected String userName;
     protected String title;
     protected String description;
+    protected TaskState state;
+    protected Date startTime;
+    protected Date endTime;
+    private Long durationInMillis;
+
+    public Long getDurationInMillis() {
+        return durationInMillis;
+    }
+
+    public void setDurationInMillis(Long durationInMillis) {
+        this.durationInMillis = durationInMillis;
+    }
+
+    public TaskState getState() {
+        return state;
+    }
+
+    public byte getStateValue() {
+        return state == null ? -1 : state.getType();
+    }
+
+    public void setState(TaskState state) {
+        this.state = state;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
     protected Map<String, Object> variables;
 
     public String getAssigneeName() {
