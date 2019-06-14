@@ -95,6 +95,9 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
             return ResultDTO.buildError(ResultDTO.ERROR_CODE_SYSTEM_ERROR, "miss type");
         }
         try {
+            if (query.getState() == null) {
+                query.setState(TaskQuery.STATE.ALL);
+            }
             if (query.getType() == TaskQuery.TYPE.WAITING_PROCESS) {
                 return createTaskQuery(query);
             } else if (query.getType() == TaskQuery.TYPE.INITIATE) {
@@ -120,6 +123,14 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
         HistoricTaskInstanceQuery q = historyService.createHistoricTaskInstanceQuery();
         q.processDefinitionKey(query.getProcessDefinitionKey());
         q.taskAssignee(String.valueOf(query.getUserId()));
+        switch (query.getState()) {
+            case UNFINISHED:
+                q.unfinished();
+                break;
+            case FINISHED:
+                q.finished();
+                break;
+        }
         if (query.getTitle() != null) {
             q.processVariableValueLike(Constants.TASK_TITLE, query.getTitle());
         }
@@ -173,6 +184,14 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
         HistoricProcessInstanceQuery q = historyService.createHistoricProcessInstanceQuery();
         q.processDefinitionKey(query.getProcessDefinitionKey());
         q.startedBy(query.getUserId());
+        switch (query.getState()) {
+            case UNFINISHED:
+                q.unfinished();
+                break;
+            case FINISHED:
+                q.finished();
+                break;
+        }
         if (query.getInitiatorId() != null) {
             q.variableValueEquals(Constants.TASK_INITIATOR_ID, query.getInitiatorId());
         }

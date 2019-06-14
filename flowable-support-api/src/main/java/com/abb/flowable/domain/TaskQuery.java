@@ -26,12 +26,19 @@ public class TaskQuery implements Serializable {
         PROCESSED
     }
 
+    public enum STATE {
+        ALL,
+        FINISHED,
+        UNFINISHED
+    }
+
     private boolean withVariables = true;
     /**
      * 用户id
      */
     private String userId;
     private TYPE type;
+    private STATE state = STATE.ALL;
     private String processDefinitionKey;
     private int start;
     private int limit;
@@ -143,6 +150,15 @@ public class TaskQuery implements Serializable {
 
     public TaskQuery setWithVariables(boolean withVariables) {
         this.withVariables = withVariables;
+        return this;
+    }
+
+    public STATE getState() {
+        return state;
+    }
+
+    public TaskQuery setState(STATE state) {
+        this.state = state;
         return this;
     }
 
