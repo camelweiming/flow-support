@@ -23,9 +23,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -60,11 +58,6 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
         }
         builder.deploy();
         logger.info("processEngine init finished");
-    }
-
-    private static org.springframework.core.io.Resource[] findAllClassPathResources(String location) throws IOException {
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        return resolver.getResources(location);
     }
 
     @Override
@@ -116,9 +109,31 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
         }
     }
 
+    /**
+     * select distinct RES.* from ACT_HI_TASKINST RES WHERE RES.ASSIGNEE_ = ? order by RES.START_TIME_ desc LIMIT 100
+     *
+     * @param query
+     * @return
+     */
     public ResultDTO<List<TaskDTO>> createHistoricTaskInstanceQuery(TaskQuery query) {
         int total = 0;
-        HistoricTaskInstanceQuery q = historyService.createHistoricTaskInstanceQuery().taskAssignee(String.valueOf(query.getUserId())).orderByTaskCreateTime().desc();
+        HistoricTaskInstanceQuery q = historyService.createHistoricTaskInstanceQuery();
+        q.processDefinitionKey(query.getProcessDefinitionKey());
+        q.taskAssignee(String.valueOf(query.getUserId()));
+        if (query.getTitle() != null) {
+            q.processVariableValueLike(Constants.TASK_TITLE, query.getTitle());
+        }
+        if (query.getInitiatorId() != null) {
+            q.processVariableValueEquals(Constants.TASK_INITIATOR_ID, query.getInitiatorId());
+        }
+        if (query.getProcessVariableValueEquals() != null) {
+            query.getProcessVariableValueEquals().forEach((k, v) -> q.processVariableValueEquals(k, v));
+        }
+        if (query.getProcessVariableValueNotEquals() != null) {
+            query.getProcessVariableValueNotEquals().forEach((k, v) -> q.processVariableValueNotEquals(k, v));
+        }
+        q.orderByTaskCreateTime();
+        q.desc();
         if (query.isNeedTotal()) {
             total = (int)q.count();
         }
@@ -137,9 +152,32 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
         return ResultDTO.buildSuccess(list, total);
     }
 
+    /**
+     * select distinct RES.* , DEF.KEY_ as PROC_DEF_KEY_, DEF.NAME_ as PROC_DEF_NAME_, DEF.VERSION_ as PROC_DEF_VERSION_, DEF.DEPLOYMENT_ID_ as DEPLOYMENT_ID_ from ACT_HI_PROCINST RES left outer join
+     * ACT_RE_PROCDEF DEF on RES.PROC_DEF_ID_ = DEF.ID_ WHERE RES.START_USER_ID_ = ? order by RES.START_TIME_ desc LIMIT 100
+     *
+     * @param query
+     * @return
+     */
     public ResultDTO<List<TaskDTO>> createHistoricProcessInstanceQuery(TaskQuery query) {
         int total = 0;
-        HistoricProcessInstanceQuery q = historyService.createHistoricProcessInstanceQuery().orderByProcessInstanceStartTime().desc().startedBy(query.getUserId());
+        HistoricProcessInstanceQuery q = historyService.createHistoricProcessInstanceQuery();
+        q.processDefinitionKey(query.getProcessDefinitionKey());
+        q.startedBy(query.getUserId());
+        if (query.getInitiatorId() != null) {
+            q.variableValueEquals(Constants.TASK_INITIATOR_ID, query.getInitiatorId());
+        }
+        if (query.getTitle() != null) {
+            q.variableValueLike(Constants.TASK_TITLE, query.getTitle());
+        }
+        if (query.getProcessVariableValueEquals() != null) {
+            query.getProcessVariableValueEquals().forEach((k, v) -> q.variableValueEquals(k, v));
+        }
+        if (query.getProcessVariableValueNotEquals() != null) {
+            query.getProcessVariableValueNotEquals().forEach((k, v) -> q.variableValueNotEquals(k, v));
+        }
+        q.orderByProcessInstanceStartTime();
+        q.desc();
         if (query.isNeedTotal()) {
             total = (int)q.count();
         }
@@ -158,10 +196,32 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
         return ResultDTO.buildSuccess(list, total);
     }
 
+    /**
+     * select distinct RES.* from ACT_RU_TASK RES left join ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_ WHERE (RES.ASSIGNEE_ = ? or ( RES.ASSIGNEE_ is null and I.TYPE_ = 'candidate' and (I.USER_ID_
+     * = ? ))) order by RES.CREATE_TIME_ desc LIMIT 100
+     *
+     * @param query
+     * @return
+     */
     public ResultDTO<List<TaskDTO>> createTaskQuery(TaskQuery query) {
         int total = 0;
-        org.flowable.task.api.TaskQuery q = taskService.createTaskQuery().processDefinitionKey(query.getProcessDefinitionKey()).taskCandidateOrAssigned(query.getUserId()).orderByTaskCreateTime()
-            .desc();
+        org.flowable.task.api.TaskQuery q = taskService.createTaskQuery();
+        q.processDefinitionKey(query.getProcessDefinitionKey());
+        q.taskCandidateOrAssigned(query.getUserId());
+        if (query.getInitiatorId() != null) {
+            q.processVariableValueEquals(Constants.TASK_INITIATOR_ID, query.getInitiatorId());
+        }
+        if (query.getTitle() != null) {
+            q.processVariableValueLike(Constants.TASK_TITLE, query.getTitle());
+        }
+        if (query.getProcessVariableValueEquals() != null) {
+            query.getProcessVariableValueEquals().forEach((k, v) -> q.processVariableValueEquals(k, v));
+        }
+        if (query.getProcessVariableValueNotEquals() != null) {
+            query.getProcessVariableValueNotEquals().forEach((k, v) -> q.processVariableValueNotEquals(k, v));
+        }
+        q.orderByTaskCreateTime();
+        q.desc();
         if (query.isNeedTotal()) {
             total = (int)q.count();
         }
@@ -188,9 +248,11 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
         try {
             Map<String, Object> variables = new HashMap<>(8);
             variables.put(Constants.TASK_USER_ID, flowSubmitDTO.getUserId());
+            variables.put(Constants.TASK_USER_NAME, flowSubmitDTO.getUserName());
+            variables.put(Constants.TASK_INITIATOR_ID, flowSubmitDTO.getUserId());
+            variables.put(Constants.TASK_INITIATOR_NAME, flowSubmitDTO.getUserName());
             variables.put(Constants.TASK_ASSIGNEE, flowSubmitDTO.getAssignee());
             variables.put(Constants.TASK_ASSIGNEE_NAME, flowSubmitDTO.getAssigneeName());
-            variables.put(Constants.TASK_USER_NAME, flowSubmitDTO.getUserName());
             Authentication.setAuthenticatedUserId("" + flowSubmitDTO.getUserId());
             if (flowSubmitDTO.getSkip() != null && flowSubmitDTO.getSkip()) {
                 variables.put(Constants.TASK_SKIP, true);

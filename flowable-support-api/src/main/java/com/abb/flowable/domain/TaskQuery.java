@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author cenpeng.lwm
@@ -26,12 +27,61 @@ public class TaskQuery implements Serializable {
     }
 
     private boolean withVariables = true;
+    /**
+     * 用户id
+     */
     private String userId;
     private TYPE type;
     private String processDefinitionKey;
     private int start;
     private int limit;
     private boolean needTotal;
+    /**
+     * 发起人过滤，通过内置variable：initiator_id 过滤
+     */
+    private String initiatorId;
+    /**
+     * 标题过滤，通过内置variable：title过滤
+     */
+    private String title;
+    private Map<String, Object> processVariableValueEquals;
+    private Map<String, Object> processVariableValueNotEquals;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public TaskQuery setTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public String getInitiatorId() {
+        return initiatorId;
+    }
+
+    public TaskQuery setInitiatorId(String initiatorId) {
+        this.initiatorId = initiatorId;
+        return this;
+    }
+
+    public Map<String, Object> getProcessVariableValueEquals() {
+        return processVariableValueEquals;
+    }
+
+    public TaskQuery setProcessVariableValueEquals(Map<String, Object> processVariableValueEquals) {
+        this.processVariableValueEquals = processVariableValueEquals;
+        return this;
+    }
+
+    public Map<String, Object> getProcessVariableValueNotEquals() {
+        return processVariableValueNotEquals;
+    }
+
+    public TaskQuery setProcessVariableValueNotEquals(Map<String, Object> processVariableValueNotEquals) {
+        this.processVariableValueNotEquals = processVariableValueNotEquals;
+        return this;
+    }
 
     public boolean isNeedTotal() {
         return needTotal;

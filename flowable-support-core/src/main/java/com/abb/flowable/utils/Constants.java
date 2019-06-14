@@ -10,6 +10,8 @@ public class Constants {
     public static String TASK_ASSIGNEE_NAME = "assignee_name";
     public static String TASK_USER_ID = "user_id";
     public static String TASK_USER_NAME = "user_name";
+    public static String TASK_INITIATOR_ID = "initiator_id";
+    public static String TASK_INITIATOR_NAME = "initiator_name";
     public static String TASK_SKIP = "skip";
     public static String TASK_PASS = "pass";
     public static String TASK_TITLE = "title";
