@@ -1,6 +1,7 @@
 package com.abb.flowable.utils;
 
 import com.abb.flowable.domain.*;
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.runtime.ProcessInstance;
@@ -34,6 +35,9 @@ public class Converter {
         node.setDurationInMillis(historicActivityInstance.getDurationInMillis());
         node.setDeleteReason(historicActivityInstance.getDeleteReason());
         setState(node);
+        if (node.getState() == TaskState.END && node.getAssignee() == null && !StringUtils.equals(node.getActivityType(), "startEvent")) {
+            node.setSkipped(true);
+        }
         return node;
     }
 

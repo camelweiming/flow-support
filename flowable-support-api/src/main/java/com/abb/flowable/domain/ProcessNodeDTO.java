@@ -27,6 +27,18 @@ public class ProcessNodeDTO extends BaseDTO {
      * 发起人
      */
     private String initiator;
+    /**
+     * 是否略过节点
+     */
+    private boolean skipped;
+
+    public boolean isSkipped() {
+        return skipped;
+    }
+
+    public void setSkipped(boolean skipped) {
+        this.skipped = skipped;
+    }
 
     public String getFormKey() {
         return formKey;

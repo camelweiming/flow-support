@@ -15,9 +15,15 @@ public abstract class BaseDTO implements Serializable {
     protected String userName;
     protected String title;
     protected String description;
+    /**
+     * 状态
+     */
     protected TaskState state;
     protected Date startTime;
     protected Date endTime;
+    /**
+     * 持续时间
+     */
     private Long durationInMillis;
 
     public Long getDurationInMillis() {
