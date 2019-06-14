@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author cenpeng.lwm
@@ -15,6 +16,26 @@ import java.util.List;
 public class ComponentForm implements Serializable {
     private static final long serialVersionUID = -19879769267751819L;
     private List<Component> components;
+    private String redirectUrl;
+    private Map<String, Object> extra;
+
+    public String getRedirectUrl() {
+        return redirectUrl;
+    }
+
+    public ComponentForm setRedirectUrl(String redirectUrl) {
+        this.redirectUrl = redirectUrl;
+        return this;
+    }
+
+    public Map<String, Object> getExtra() {
+        return extra;
+    }
+
+    public ComponentForm setExtra(Map<String, Object> extra) {
+        this.extra = extra;
+        return this;
+    }
 
     public List<Component> getComponents() {
         return components;

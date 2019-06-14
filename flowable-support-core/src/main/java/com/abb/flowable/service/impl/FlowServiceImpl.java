@@ -153,8 +153,17 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
     }
 
     /**
+     * 普通查询：
+     * <p>
      * select distinct RES.* , DEF.KEY_ as PROC_DEF_KEY_, DEF.NAME_ as PROC_DEF_NAME_, DEF.VERSION_ as PROC_DEF_VERSION_, DEF.DEPLOYMENT_ID_ as DEPLOYMENT_ID_ from ACT_HI_PROCINST RES left outer join
      * ACT_RE_PROCDEF DEF on RES.PROC_DEF_ID_ = DEF.ID_ WHERE RES.START_USER_ID_ = ? order by RES.START_TIME_ desc LIMIT 100
+     * <p>
+     * <p>
+     * <p>
+     * 变量查询：
+     * <p>
+     * select distinct RES.* , A0.* from ACT_HI_PROCINST RES left outer join ACT_RE_PROCDEF DEF on RES.PROC_DEF_ID_ = DEF.ID_ inner join ACT_HI_VARINST A0 on RES.PROC_INST_ID_ = A0.PROC_INST_ID_ WHERE
+     * RES.START_USER_ID_ = 75001
      *
      * @param query
      * @return

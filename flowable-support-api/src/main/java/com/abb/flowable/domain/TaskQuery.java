@@ -39,7 +39,7 @@ public class TaskQuery implements Serializable {
     /**
      * 发起人过滤，通过内置variable：initiator_id 过滤
      */
-    private String initiatorId;
+    private Long initiatorId;
     /**
      * 标题过滤，通过内置variable：title过滤
      */
@@ -56,11 +56,11 @@ public class TaskQuery implements Serializable {
         return this;
     }
 
-    public String getInitiatorId() {
+    public Long getInitiatorId() {
         return initiatorId;
     }
 
-    public TaskQuery setInitiatorId(String initiatorId) {
+    public TaskQuery setInitiatorId(Long initiatorId) {
         this.initiatorId = initiatorId;
         return this;
     }
