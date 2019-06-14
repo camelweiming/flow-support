@@ -11,8 +11,6 @@ import org.flowable.engine.common.impl.identity.Authentication;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.history.HistoricProcessInstance;
 import org.flowable.engine.history.HistoricProcessInstanceQuery;
-import org.flowable.engine.impl.cfg.ProcessEngineConfigurationImpl;
-import org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.flowable.engine.repository.DeploymentBuilder;
 import org.flowable.engine.runtime.ProcessInstance;
 import org.flowable.task.api.Task;
@@ -26,10 +24,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
-import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,15 +35,12 @@ import java.util.Map;
  * @author cenpeng.lwm
  * @since 2019/5/25
  */
-@Service
 public class FlowServiceImpl implements FlowService, InitializingBean, ApplicationContextAware {
     private Logger logger = LoggerFactory.getLogger(FlowServiceImpl.class);
     private volatile ApplicationContext context;
-    @Resource
-    private DataSource dataSource;
     private RuntimeService runtimeService;
     private ProcessEngine processEngine;
-    private ProcessEngineConfigurationImpl processEngineConfiguration;
+    private ProcessEngineConfiguration processEngineConfiguration;
     private HistoryService historyService;
     private TaskService taskService;
     private RepositoryService repositoryService;
@@ -56,9 +48,6 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        processEngineConfiguration = new StandaloneProcessEngineConfiguration();
-        processEngineConfiguration.setDataSource(dataSource);
-        processEngineConfiguration.setAsyncExecutorActivate(true);
         processEngine = processEngineConfiguration.buildProcessEngine();
         repositoryService = processEngine.getRepositoryService();
         runtimeService = processEngine.getRuntimeService();
@@ -171,7 +160,8 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
 
     public ResultDTO<List<TaskDTO>> createTaskQuery(TaskQuery query) {
         int total = 0;
-        org.flowable.task.api.TaskQuery q = taskService.createTaskQuery().taskCandidateOrAssigned(query.getUserId()).orderByTaskCreateTime().desc();
+        org.flowable.task.api.TaskQuery q = taskService.createTaskQuery().processDefinitionKey(query.getProcessDefinitionKey()).taskCandidateOrAssigned(query.getUserId()).orderByTaskCreateTime()
+            .desc();
         if (query.isNeedTotal()) {
             total = (int)q.count();
         }
@@ -354,6 +344,10 @@ public class FlowServiceImpl implements FlowService, InitializingBean, Applicati
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.context = applicationContext;
+    }
+
+    public void setProcessEngineConfiguration(ProcessEngineConfiguration processEngineConfiguration) {
+        this.processEngineConfiguration = processEngineConfiguration;
     }
 
     public void setResources(org.springframework.core.io.Resource[] resources) {
