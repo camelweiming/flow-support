@@ -93,6 +93,11 @@
                 <artifactId>flowable-engine-common-api</artifactId>
                 <version>6.3.0</version>
             </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>2.6</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

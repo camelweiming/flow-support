@@ -7,15 +7,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="flowable-support-api" />
-        <module name="flowable-support-core" />
         <module name="flowable-support-test" />
+        <module name="flowable-support-core" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="flowable-support" target="1.8" />
-      <module name="flowable-support-api" target="1.8" />
-      <module name="flowable-support-core" target="1.8" />
-      <module name="flowable-support-test" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>
